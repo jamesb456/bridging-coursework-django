@@ -1,0 +1,35 @@
+{% load static %}
+<html>
+
+<head>
+    <title>Coursework blog</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    </link>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="page-header">
+        <h1><a href="/">Bridging Coursework blog</a></h1>
+    </div>
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+            {% block content %}
+            {% endblock %}
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container-fluid">
+            <a href="https://github.com/jamesb456"><img src="{% static "images/GitHub-Mark-32px.png" %}"</img> jamesb456</a>
+            
+        </div>
+    </footer>
+
+</body>
+
+
+</html>
