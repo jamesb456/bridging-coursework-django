@@ -18,4 +18,4 @@ def markdown_preview(value : str):
         return markdown(value)
     else:
         end_index = value[400:].find('\n') + 400
-        return markdown(value[0:end_index] + "\n...")
+        return markdown(value[0:end_index] + "\n\n...")
