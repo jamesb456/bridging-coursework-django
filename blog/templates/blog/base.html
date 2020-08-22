@@ -3,15 +3,15 @@
 
 <head>
     <title>Coursework blog</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-    </link>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"></link>
+    <script src="https://kit.fontawesome.com/d5ddf95ef1.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}"></link>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
     <header class="page-header">
-        <h1><a href="/">Bridging Coursework blog</a></h1>
+        <h1 id="header-title"><a href="/">Bridging Coursework blog</a></h1>
     </header>
     <div class="content container-fluid">
         <div class="row d-flex">
@@ -20,15 +20,27 @@
             {% block content %}
             {% endblock %}
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2">
+                {% if user.is_authenticated %}
+                    <div id="sidebar">
+                        <div class="card">
+                            <div class="card-header">Admin Controls</div>
+                            <div class="card-body">
+                            <a href="{% url 'post_new' %}" class="btn btn-secondary"><i class="fas fa-plus-square"></i>new post</a>          
+
+                            {% block sidebar_extras %}
+                            {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
     <footer class="footer">
         <div class="container-fluid text-center">
             <a href="https://github.com/jamesb456"><img src="{% static "images/GitHub-Mark-32px.png" %}"</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'post_new' %}" class="menu_controls"><span class="glyphicon glyphicon-plus"></span></a>
-            {% endif %}
+
         </div>
     </footer>
 

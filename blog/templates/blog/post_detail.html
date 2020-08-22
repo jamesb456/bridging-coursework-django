@@ -3,10 +3,8 @@
 {% block content %}
     
     <div class="post">
-        {% if user.is_authenticated %}
-            <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-        {% endif %}
         <div class="post-title centered"><h1>{{ post.title }}</h1></div>
+
         {% if post.author %}
             <div class="author centered">by {{ post.author }},</div>            
         {% endif %}
@@ -19,4 +17,7 @@
         <br>
         <p>{{ post.text| markdown | safe }}</p>
     </div>
+{% endblock %}
+{% block sidebar_extras%}
+    <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}"><span class="fa fa-edit"></span>edit post</a>
 {% endblock %}
