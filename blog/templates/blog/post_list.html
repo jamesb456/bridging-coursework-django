@@ -3,19 +3,22 @@
 
 {% block content %}
 {% for post in posts %}
-    <div class="panel panel-default">
     <div class="post">
-        <div class="panel-heading">
-            <div class="centered"><h2><a href="{% url 'post_detail' pk=post.pk slug=post.slug%}">{{ post.title }}</a></h2></div>
-            <div class="date centered">
-                <p>published: {{ post.published_date }}</p>
+        <div class="card">
+            <div class="card-header">
+                <div class="centered"><h2><a href="{% url 'post_detail' pk=post.pk slug=post.slug%}">{{ post.title }}</a></h2></div>
+                <div class="date centered">
+                    <p>published: {{ post.published_date }}</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    <p>{{ post.text| markdown_preview | safe }}</p>
+                </div>
+                <a href="{% url 'post_detail' pk=post.pk slug=post.slug%}" class="btn btn-primary">Read more</a>
             </div>
         </div>
-        <div class="panel-body">
-        <p>{{ post.text| markdown_preview | safe }}</p>
-        <h4><a href="{% url 'post_detail' pk=post.pk slug=post.slug%}">Read more</a></h4>
-        </div>
     </div>
-    </div>
+    
 {% endfor %}
 {% endblock %}
