@@ -30,6 +30,12 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
 
 
+    def get_form_element_from_label(self, form, label):
+        input_label = form.find_element_by_xpath(f'//label[text()=\'{label}\']')
+        element_id = input_label.get_attribute("for")
+        element = form.find_element_by_id(str(element_id))
+        return element
+
     def test_can_edit_cv(self):
         
         #self.client.login(username='james',password='jam')
@@ -52,23 +58,23 @@ class NewVisitorTest(LiveServerTestCase):
         form = self.browser.find_element_by_xpath('//form[@id=\'form_edit_cv\']')
 
         
-        # Firstly, James needs to edit his e-mail address. He finds a text box labeled
-        # 'e-mail' and replaces the text with 'jxb1123@student.bham.ac.uk'
-        email_label = form.find_element_by_xpath('//label[contains(text(),\'e-mail\')]')
-        txt_box_id = email_label.get_attribute("for")
-        txt_box = form.find_element_by_id(str(txt_box_id))
-        txt_box.send_keys("jxb1123@student.bham.ac.uk")
-
+        # Firstly, James needs to edit his e-mail address. He finds a text box with the label
+        # 'e-mail:' and replaces the text with 'jxb1123@student.bham.ac.uk'
         
-        self.fail("Finish the test")
-
+        txt_box_email = self.get_form_element_from_label(form,'e-mail:')
+        txt_box_email.send_keys("jxb1123@student.bham.ac.uk")
         # James then wants to edit his personal statement by adding a sentence.
-        # He finds a text box labeled 'Personal Statement' and adds a sentence
-        # about his passion for Test Driven Development
+        # He finds a text area with the label 'Personal Statement:' 
+        txt_area_ps = self.get_form_element_from_label(form,'Personal Statement:')
+        # He then adds a sentence about his passion for Test Driven Development in the text area
+        txt_area_ps.send_keys("My passion for test driven development is unparalled.")
 
         # Next, James looks at a section of the page entitled 'Education'.
+        header_education = self.browser.find_elements_by_xpath('//h2[@id=\'header_education\']')
+        self.assertEqual("Education",header_education.text)
         # He realises he needs to add an extra qualification to reflect his
         # mastery of TDD. Therefore:
+
         # He first presses the button 'Add qualification'
 
         # This reveals four new text boxes and a 'Submit' button
@@ -84,7 +90,7 @@ class NewVisitorTest(LiveServerTestCase):
         # He then presses the 'Submit' button. 
         # There is now a table showing the details he just entered
 
-
+        self.fail("Finish the test")
 
 
         
