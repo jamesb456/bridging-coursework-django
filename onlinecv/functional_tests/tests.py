@@ -17,6 +17,9 @@ MAX_WAIT = 10
 class NewVisitorTest(LiveServerTestCase):  
 
     def setUp(self):  
+        #you might need to change the next 2 lines to get tests to run
+        #basically selenium refused to find the firefox executable,
+        #so i had to manually point it to it
         self.binary = FirefoxBinary('/usr/lib/firefox/firefox')
         self.browser = webdriver.Firefox(firefox_binary=self.binary)
         self.admin_user = User.objects.create(username='james')
@@ -30,7 +33,7 @@ class NewVisitorTest(LiveServerTestCase):
     def test_can_edit_cv(self):
         
         #self.client.login(username='james',password='jam')
-        # James would like to edit his own CV. He first navigates to it on his web browser
+        # James would like to edit his own CV. He first navigates to the web page for it on his web browser
         self.browser.get(self.live_server_url + '/cv/')
 
         
@@ -38,16 +41,26 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual('CV',self.browser.title,f"Expected page title {'CV'}, got {self.browser.title}.")
 
         # In the header he sees a link to edit his CV. He clicks on it
-        button = self.browser.find_element_by_xpath('//header[@id=\'header\']/a[@id=\'btn-edit-cv\']')
-        self.assertEqual('Edit CV',button.text,f"Expected button text {'Edit CV'}, got {button.text}")
-        button.click()
+        link = self.browser.find_element_by_xpath('//header[@id=\'header\']/a[@id=\'btn-edit-cv\']')
+        self.assertEqual('Edit CV',link.text,f"Expected text {'Edit CV'}, got {link.text}")
+        link.click()
         # He is taken to a page titled 'Edit CV'
         
         self.assertEqual('Edit CV',self.browser.title,f"Expected title of page to be {'Edit CV'}, got {self.browser.title} instead.")
 
-        self.fail("Finish the test")
+        # He sees a form which allows him to change the information on his CV
+        form = self.browser.find_element_by_xpath('//form[@id=\'form_edit_cv\']')
+
+        
         # Firstly, James needs to edit his e-mail address. He finds a text box labeled
         # 'e-mail' and replaces the text with 'jxb1123@student.bham.ac.uk'
+        email_label = form.find_element_by_xpath('//label[contains(text(),\'e-mail\')]')
+        txt_box_id = email_label.get_attribute("for")
+        txt_box = form.find_element_by_id(str(txt_box_id))
+        txt_box.send_keys("jxb1123@student.bham.ac.uk")
+
+        
+        self.fail("Finish the test")
 
         # James then wants to edit his personal statement by adding a sentence.
         # He finds a text box labeled 'Personal Statement' and adds a sentence

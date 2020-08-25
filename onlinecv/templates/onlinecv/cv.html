@@ -1,12 +1,9 @@
-<html>
-    <head>
-        <title>CV</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"></link>
-        <script src="https://kit.fontawesome.com/d5ddf95ef1.js" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <header id="header">
-            <a href="{% url 'edit_cv_view' %}" id="btn-edit-cv" class="btn btn-primary">Edit CV</button>
-        </header>
-    </body>
-</html>
+{% extends 'onlinecv/base.html' %}
+{% block title %}
+    CV
+{% endblock %}
+{% block content %}
+<header id="header">
+    <a href="{% url 'edit_cv_view' %}" id="btn-edit-cv" class="btn btn-primary">Edit CV</a>
+</header>
+{% endblock %}

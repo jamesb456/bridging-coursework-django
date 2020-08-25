@@ -1,7 +1,13 @@
-<html>
-    <head>
-        <title>Edit CV</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"></link>
-        <script src="https://kit.fontawesome.com/d5ddf95ef1.js" crossorigin="anonymous"></script>
-    </head>
-</html>
+{% extends 'onlinecv/base.html' %}
+{% block title %}
+    Edit CV
+{% endblock %}
+
+{% block content %}
+    <form method="POST" id="form_edit_cv">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-secondary">Save</button>
+    </form>
+{% endblock%}
+
+    
