@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 def cv_view(request):
-    return render(request,"cv.html")
+    return render(request,"onlinecv/cv.html")
 
 def edit_cv_view(request):
-    return render(request,"edit_cv.html")
+    return render(request,"onlinecv/edit_cv.html")
