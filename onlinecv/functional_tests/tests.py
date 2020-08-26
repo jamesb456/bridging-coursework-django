@@ -62,16 +62,38 @@ class NewVisitorTest(LiveServerTestCase):
         # 'e-mail:' and replaces the text with 'jxb1123@student.bham.ac.uk'
         
         txt_box_email = self.get_form_element_from_label(form,'e-mail:')
+        txt_box_email.send_keys(Keys.CONTROL + "a")
+        txt_box_email.send_keys(Keys.DELETE)
         txt_box_email.send_keys("jxb1123@student.bham.ac.uk")
+
+    
+
+        # He now needs to add his github profile. 
+        # He finds a text box with the label "Github Profile:"
+        # and replaces the text with 'https://github.com/jamesb456'
+        txt_box_github = self.get_form_element_from_label(form, 'Github Profile:')
+        txt_box_github.send_keys(Keys.CONTROL + "a")
+        txt_box_github.send_keys(Keys.DELETE)
+        txt_box_github.send_keys("https://github.com/jamesb456")
+
+        # Finally he needs to update his LinkedIn profile
+        # He finds a text box with the label "LinkedIn Profile:"
+        # and replaces the text with 'https://www.linkedin.com/in/james-bray-9548a7172'
+        txt_box_linked = self.get_form_element_from_label(form, 'Github Profile:')
+        txt_box_linked.send_keys(Keys.CONTROL + "a")
+        txt_box_linked.send_keys(Keys.DELETE)
+        txt_box_linked.send_keys("https://www.linkedin.com/in/james-bray-9548a7172")
+
         # James then wants to edit his personal statement by adding a sentence.
-        # He finds a text area with the label 'Personal Statement:' 
-        txt_area_ps = self.get_form_element_from_label(form,'Personal Statement:')
+        # He finds a text area with the label 'Personal Profile:' 
+        txt_area_ps = self.get_form_element_from_label(form,'Personal Profile:')
         # He then adds a sentence about his passion for Test Driven Development in the text area
         txt_area_ps.send_keys("My passion for test driven development is unparalled.")
 
         # Next, James looks at a section of the page entitled 'Education'.
-        header_education = self.browser.find_elements_by_xpath('//h2[@id=\'header_education\']')
-        self.assertEqual("Education",header_education.text)
+        header_education = self.browser.find_element_by_xpath('//h2[@id=\'header_education\']')
+        print(header_education)
+        self.assertEqual("Education",header_education.text,f"Expected header text {'Education'}, got {header_education.text} instead.")
         # He realises he needs to add an extra qualification to reflect his
         # mastery of TDD. Therefore:
 
@@ -99,7 +121,7 @@ class NewVisitorTest(LiveServerTestCase):
     def test_user_facing(self):
         # Edith want's to view someone's CV. She goes to their
         # website to find a link to it
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.live_server_url + "/cv/")
 
         # The page has a link to a CV in the header,
         # which she clicks on.
@@ -138,5 +160,10 @@ class NewVisitorTest(LiveServerTestCase):
 
         # This section contains a bullet pointed list of text
 
+        # Finally as they are a Computer Science student, Edith
+        # would like to make sure that the website is in some way
+        # secure. She guesses the url for editing the CV, and navigates to it
+        # She is satisfied when a page showing the page is forbidden for her to access
+        # appears
     
 

@@ -1,14 +1,25 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .forms import CVForm
+from .models import CV
 # Create your tests here.
 class CVTest(TestCase):
     
+
     def setUp(self):
         self.admin_user = User.objects.create(username='james')
         self.admin_user.set_password('jam')
         self.admin_user.save()
         
+    #get a dictionary containing the data to test the form
+    #the optional arguments can be changed to, for example, make one of the fields invalid
+    def get_test_dictionary(self, email='stevejobs@apple.com',github_profile='https://github.com/steve_jobs',personal_statement="Personal Statement",linkedin_profile="https://linkedin.com"):
+        return { 
+            "email" : email ,
+            "github_profile" : github_profile,
+            "linkedin_profile" : linkedin_profile,
+            "personal_statement" : personal_statement
+        }
 
     def test_uses_cv_template(self):
         response = self.client.get('/cv/')
@@ -21,10 +32,27 @@ class CVTest(TestCase):
         
         self.assertTemplateUsed(response,"onlinecv/edit_cv.html")
 
-    def test_form_accepts_email(self):
-        form = CVForm(data={'email':'stevejobs@apple.com'})
+    def test_model_is_valid(self):
+        model = CV.objects.create()
+        model.save()
+        self.assertEqual(model.email,'')
+        self.assertEqual(model.github_profile,'')
+        self.assertEqual(model.linkedin_profile,'')
+        self.assertEqual(model.personal_statement,'')
+        
+    
+    def test_accepts_valid_form_data(self):
+        test_dict = self.get_test_dictionary()
+        form = CVForm(data=test_dict)
+        print(form.errors)
         self.assertTrue(form.is_valid())
+        
+
     
     def test_form_invalid_email(self):
-        form = CVForm(data={'email':''})
+        form = CVForm(data=self.get_test_dictionary(email='not_valid.zs.x'))
+        self.assertFalse(form.is_valid())
+
+    def test_form_invalid_github_profile(self):
+        form = CVForm(data=self.get_test_dictionary(github_profile='not_a_url'))
         self.assertFalse(form.is_valid())
