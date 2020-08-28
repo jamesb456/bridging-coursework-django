@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import CV, Qualification
+from .models import CV, Qualification, Skill
 from django.forms import inlineformset_factory
 class CVForm(forms.ModelForm):
     class Meta:
@@ -18,3 +18,4 @@ class CVForm(forms.ModelForm):
 
 
 QualFormSet = inlineformset_factory(CV,Qualification,fields=('title','start_date','end_date','description'),extra=0,can_delete=False)
+SkillFormSet = inlineformset_factory(CV,Skill,fields=('description',),extra=0,can_delete=False)

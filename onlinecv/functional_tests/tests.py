@@ -115,7 +115,7 @@ class NewVisitorTest(LiveServerTestCase):
         add_qualifaction_button.click()
         
         # The table now has an additional row, with a text input area for each column of the table
-        # In the text box for the row 'Title' James writes 'MSci Testing, Driving and Developing'
+        # In the text box for the column 'Title' James writes 'MSci Testing, Driving and Developing'
 
         qual_tbody = qual_table.find_element_by_tag_name("tbody")
         qual_first_row = qual_tbody.find_element_by_tag_name("tr")
@@ -124,13 +124,13 @@ class NewVisitorTest(LiveServerTestCase):
         txt_title = qual_cells[0].find_element_by_tag_name("input")
         txt_title.send_keys("MSci Testing, Driving and Developing")
 
-        # In the text box for the row 'Start Date' James replaces the default with '16/05/2020'
+        # In the text box for the column 'Start Date' James replaces the default with '16/05/2020'
         txt_sd =  qual_cells[1].find_element_by_tag_name("input")
         txt_sd.send_keys(Keys.CONTROL + "a")
         txt_sd.send_keys(Keys.DELETE)
         txt_sd.send_keys("16/05/2020")
 
-        # In the text box for the row 'End Date' James replaces the default with '22/08/2020'
+        # In the text box for the column 'End Date' James replaces the default with '22/08/2020'
         txt_ed = qual_cells[2].find_element_by_tag_name("input")
         txt_ed.send_keys(Keys.CONTROL + "a")
         txt_ed.send_keys(Keys.DELETE)
@@ -172,7 +172,7 @@ class NewVisitorTest(LiveServerTestCase):
         # In the third box James types 'Developing'
         txt_skill_3.send_keys("Developing")
 
-
+      
         # Further down from this is another section called 'Employment'
         header_technical = form.find_element_by_xpath("//h2[@id=\'header_employment\']")
         self.assertEqual("Employment",header_technical.text)
@@ -190,22 +190,22 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual("Add New Employment",add_qualifaction_button.text,f"Expected button text {'Add New Employment'}, got {add_employment_button.text} instead.")
         add_employment_button.click()
 
-        # The table now has an additional row, with a text input area for each column of the table
+        # The table now has an additional column, with a text input area for each column of the table
         emp_tbody = emp_table.find_element_by_tag_name("tbody")
         emp_first_row = emp_tbody.find_element_by_tag_name("tr")
         emp_cells = emp_first_row.find_elements_by_tag_name("td")
 
-        # In the text box for the row 'Title' James writes 'Software Development (the testing company)'
+        # In the text box for the column 'Title' James writes 'Software Development (the testing company)'
         emp_txt_title = emp_cells[0].find_element_by_tag_name("input")
         emp_txt_title.send_keys("MSci Testing, Driving and Developing")
 
-       # In the text box for the row 'Start Date' James replaces the default with '01/08/2020'
+       # In the text box for the column 'Start Date' James replaces the default with '01/08/2020'
         emp_txt_sd =  emp_cells[1].find_element_by_tag_name("input")
         emp_txt_sd.send_keys(Keys.CONTROL + "a")
         emp_txt_sd.send_keys(Keys.DELETE)
         emp_txt_sd.send_keys("01/08/2020")
 
-        # In the text box for the row 'End Date' James replaces the default with '31/08/2020'
+        # In the text box for the column 'End Date' James replaces the default with '31/08/2020'
         emp_txt_ed = emp_cells[2].find_element_by_tag_name("input")
         emp_txt_ed.send_keys(Keys.CONTROL + "a")
         emp_txt_ed.send_keys(Keys.DELETE)

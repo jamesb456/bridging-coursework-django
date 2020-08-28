@@ -13,3 +13,7 @@ class Qualification(models.Model):
     start_date = models.DateField(default=date(1970,1,1))
     end_date = models.DateField(default=date(1970,1,2))
     description = models.TextField(default="")
+
+class Skill(models.Model):
+    linked_cv = models.ForeignKey(CV,on_delete=models.CASCADE)
+    description = models.CharField(max_length=200,default="")
