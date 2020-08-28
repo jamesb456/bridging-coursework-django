@@ -4,10 +4,81 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST" id="form_edit_cv">{% csrf_token %}
-        {{ form.as_p }}
+    <h1>Edit CV</h1>
+    <form method="POST" id="form_edit_cv" autocomplete="off">{% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper">
+            {{ form.email.errors }}
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.github_profile.errors }}
+            {{ form.github_profile.label_tag }}
+            {{ form.github_profile }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.linkedin_profile.errors }}
+            {{ form.linkedin_profile.label_tag }}
+            {{ form.linkedin_profile }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.personal_statement.errors }}
+            {{ form.personal_statement.label_tag }}
+            {{ form.personal_statement }}
+        </div>
+        <h2 id="header_education">Education</h2>
+        <h3 id="header_qual">Qualifications</h3>
+        {% for field in formset.management_form %}
+            {{ field}}
+        {% endfor %}
+        <div id="empty_form" style="display:none">
+        
+            <span class="row-replace">
+                {% for field in formset.empty_form.visible_fields %}
+                    <i class="data-replace">{{field}}</i>
+                {% endfor %}
+            </span>
+        </div>
+        <table id="table_qualifications" class="table">
+
+            <thead class="thead-light">
+                {% for field in formset.empty_form.visible_fields %}
+                    <th>{{ field.label_tag }}</th>
+                {% endfor %}
+                    <th />
+            </thead>
+            <tbody id="table_body">
+            {% for form in formset %}
+                <tr>
+                {% for field in form.visible_fields %}
+                    <td>{{field}}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+      
+        <button type="button" class="btn btn-primary" id="add_qualification">Add another qualification</button>
+        
         <button type="submit" class="btn btn-secondary">Save</button>
     </form>
+
+    <script>
+
+    $('#add_qualification').click(function() {
+        var form_idx = $('#id_qualification_set-TOTAL_FORMS').val();
+        //this code is horrible and I am disgusted that I wrote it, but its the easiest way
+        $('#table_body').append($('#empty_form').html().replace(/__prefix__/g, form_idx)
+        .replace(/<span class="row-replace">/g,"<tr>")
+        .replace(/<\/span>/g,"<\/tr>")
+        .replace(/<i class="data-replace">/g,"<td>")
+        .replace(/<\/i>/g,"<\/td>")
+        );
+        $('#id_qualification_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+    </script>
 {% endblock%}
 
     
+

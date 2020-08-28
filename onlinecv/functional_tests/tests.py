@@ -79,38 +79,109 @@ class NewVisitorTest(LiveServerTestCase):
         # Finally he needs to update his LinkedIn profile
         # He finds a text box with the label "LinkedIn Profile:"
         # and replaces the text with 'https://www.linkedin.com/in/james-bray-9548a7172'
-        txt_box_linked = self.get_form_element_from_label(form, 'Github Profile:')
+        txt_box_linked = self.get_form_element_from_label(form, 'LinkedIn Profile:')
         txt_box_linked.send_keys(Keys.CONTROL + "a")
         txt_box_linked.send_keys(Keys.DELETE)
         txt_box_linked.send_keys("https://www.linkedin.com/in/james-bray-9548a7172")
 
         # James then wants to edit his personal statement by adding a sentence.
         # He finds a text area with the label 'Personal Profile:' 
+        # and adds a sentence about his passion for test driven development
+        
         txt_area_ps = self.get_form_element_from_label(form,'Personal Profile:')
-        # He then adds a sentence about his passion for Test Driven Development in the text area
         txt_area_ps.send_keys("My passion for test driven development is unparalled.")
 
         # Next, James looks at a section of the page entitled 'Education'.
-        header_education = self.browser.find_element_by_xpath('//h2[@id=\'header_education\']')
-        print(header_education)
+        header_education = form.find_element_by_xpath('//h2[@id=\'header_education\']')
         self.assertEqual("Education",header_education.text,f"Expected header text {'Education'}, got {header_education.text} instead.")
-        # He realises he needs to add an extra qualification to reflect his
-        # mastery of TDD. Therefore:
-
-        # He first presses the button 'Add qualification'
-
-        # This reveals four new text boxes and a 'Submit' button
-
-        # In the text box labeled 'Title' James writes 'MSci Testing, Driving and Developing'
-
-        # In the text box labeled 'Start Date' James writes '16/05/2020'
-
-        # In the text box labeled 'End Date' James writes '22/08/2020'
+        # He finds a table of qualifications
+        qual_table = form.find_element_by_xpath('//table[@id=\'table_qualifications\']')
+        # The table is currently empty. However there is a header showing the four things
+        # that James will need to input when he adds a qualification:
+        # 'Title' , 'Start date', 'End date' and 'Description' (in that order)
+        header_fields = qual_table.find_elements_by_xpath('//thead/tr/th/label')
         
-        # In the text box labeled 'Description' James writes 'something about goats'
 
-        # He then presses the 'Submit' button. 
-        # There is now a table showing the details he just entered
+        self.assertIn("Title",header_fields[0].text)
+        self.assertIn("Start date",header_fields[1].text)
+        self.assertIn("End date",header_fields[2].text)
+        self.assertIn("Description",header_fields[3].text)
+        # He realises he needs to add a qualification to reflect his
+        # mastery of TDD. Therefore:
+        
+        # He first presses the button 'Add another qualification'
+        add_qualifaction_button = form.find_element_by_xpath('//button[@id=\'add_qualification\']')
+        self.assertEqual("Add another qualification",add_qualifaction_button.text,f"Expected button text {'Add qualification'}, got {add_qualifaction_button.text} instead.")
+        add_qualifaction_button.click()
+        
+        # The table now has an additional row, with a text input area for each column of the table
+        # In the text box for the row 'Title' James writes 'MSci Testing, Driving and Developing'
+
+        tbody = qual_table.find_element_by_tag_name("tbody")
+        first_row = tbody.find_element_by_tag_name("tr")
+        cells = first_row.find_elements_by_tag_name("td")
+        
+        txt_title = cells[0].find_element_by_tag_name("input")
+        txt_title.send_keys("MSci Testing, Driving and Developing")
+
+        # In the text box for the row 'Start Date' James replaces the default with '16/05/2020'
+        txt_sd =  cells[1].find_element_by_tag_name("input")
+        txt_sd.send_keys(Keys.CONTROL + "a")
+        txt_sd.send_keys(Keys.DELETE)
+        txt_sd.send_keys("16/05/2020")
+
+        # In the text box for the row 'End Date' James replaces the default with '22/08/2020'
+        txt_ed = cells[2].find_element_by_tag_name("input")
+        txt_ed.send_keys(Keys.CONTROL + "a")
+        txt_ed.send_keys(Keys.DELETE)
+        txt_ed.send_keys("22/08/2020")
+
+        # The 'Description' column has a larger text box. In it James writes 'something about goats'
+        txt_desc = cells[3].find_element_by_tag_name("textarea")
+        txt_desc.send_keys("something about goats")
+
+        # Now that he has added a qualification, he looks further down the page, finding a section called
+        # 'Technical Skills'
+
+        # James wants to add three skills: Testing, Driving, and Developing
+
+        # There is a button with the text 'Add another skill'
+        # James presses this button three times. After this happened
+        # he notices that three text boxes have appeared.
+        
+        # In the first box James types 'Testing'
+        
+        # In the second box James types 'Driving'
+        
+        # In the third box James types 'Developing'
+        
+
+
+        # Further down from this is another section called 'Employment'
+        
+        # Like the 'Qualifications' section, this contains an empty table. The headers
+        # on this table are "Job Title" , "Start Date" , "End date" and "Description"
+
+        # James needs to add some new employment, so he presses the button with the text 'Add New Employment'
+
+        # The table now has an additional row, with a text input area for each column of the table
+        # In the text box for the row 'Title' James writes 'Software Development (the testing company)'
+
+        # In the text box for the row 'Start Date' James replaces the default with '01/08/2020'
+
+        # In the text box for the row 'End Date' James replaces the default with '31/08/2020'
+
+        # The 'Description' column has a larger text box. In it James writes 'I was lucky enough to spend a month at this job.'
+        
+
+
+        # There is a final section at the bottom called 'Projects and Interests'
+        # James presses the button labeled 'Add another interest/project'
+        # In the text box that appears he types 'The biology of goats'
+        
+        # Finally James presses the 'Save' button. Upon the page reloaded he sees that the data
+        # he entered is preserved    
+
 
         self.fail("Finish the test")
 
