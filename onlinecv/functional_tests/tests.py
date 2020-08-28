@@ -117,64 +117,105 @@ class NewVisitorTest(LiveServerTestCase):
         # The table now has an additional row, with a text input area for each column of the table
         # In the text box for the row 'Title' James writes 'MSci Testing, Driving and Developing'
 
-        tbody = qual_table.find_element_by_tag_name("tbody")
-        first_row = tbody.find_element_by_tag_name("tr")
-        cells = first_row.find_elements_by_tag_name("td")
+        qual_tbody = qual_table.find_element_by_tag_name("tbody")
+        qual_first_row = qual_tbody.find_element_by_tag_name("tr")
+        qual_cells = qual_first_row.find_elements_by_tag_name("td")
         
-        txt_title = cells[0].find_element_by_tag_name("input")
+        txt_title = qual_cells[0].find_element_by_tag_name("input")
         txt_title.send_keys("MSci Testing, Driving and Developing")
 
         # In the text box for the row 'Start Date' James replaces the default with '16/05/2020'
-        txt_sd =  cells[1].find_element_by_tag_name("input")
+        txt_sd =  qual_cells[1].find_element_by_tag_name("input")
         txt_sd.send_keys(Keys.CONTROL + "a")
         txt_sd.send_keys(Keys.DELETE)
         txt_sd.send_keys("16/05/2020")
 
         # In the text box for the row 'End Date' James replaces the default with '22/08/2020'
-        txt_ed = cells[2].find_element_by_tag_name("input")
+        txt_ed = qual_cells[2].find_element_by_tag_name("input")
         txt_ed.send_keys(Keys.CONTROL + "a")
         txt_ed.send_keys(Keys.DELETE)
         txt_ed.send_keys("22/08/2020")
 
         # The 'Description' column has a larger text box. In it James writes 'something about goats'
-        txt_desc = cells[3].find_element_by_tag_name("textarea")
+        txt_desc = qual_cells[3].find_element_by_tag_name("textarea")
         txt_desc.send_keys("something about goats")
 
+       
         # Now that he has added a qualification, he looks further down the page, finding a section called
         # 'Technical Skills'
+        header_technical = form.find_element_by_xpath("//h2[@id=\'header_technical\']")
 
+        self.assertEqual("Technical skills",header_technical.text)
         # James wants to add three skills: Testing, Driving, and Developing
 
         # There is a button with the text 'Add another skill'
         # James presses this button three times. After this happened
-        # he notices that three text boxes have appeared.
+        btn_add_skill = form.find_element_by_xpath("//button[@id=\'add_skill\']")
+        self.assertEqual("Add another skill",btn_add_skill.text)
+
+        btn_add_skill.click()
+        btn_add_skill.click()
+        btn_add_skill.click()
+
+
+        # he notices that three text boxes have appeared. Each is labeled with the text 'Skill 1' , 'Skill 2'... depending on whether its the
+        # first second or third skill.
+
+        txt_skill_1 = self.get_form_element_from_label(form,"Skill 1:")
+        txt_skill_2 = self.get_form_element_from_label(form,"Skill 2:")
+        txt_skill_3 = self.get_form_element_from_label(form,"Skill 3:")
         
         # In the first box James types 'Testing'
-        
+        txt_skill_1.send_keys("Testing")
         # In the second box James types 'Driving'
-        
+        txt_skill_2.send_keys("Driving")
         # In the third box James types 'Developing'
-        
+        txt_skill_3.send_keys("Developing")
 
 
         # Further down from this is another section called 'Employment'
-        
+        header_technical = form.find_element_by_xpath("//h2[@id=\'header_employment\']")
+        self.assertEqual("Employment",header_technical.text)
         # Like the 'Qualifications' section, this contains an empty table. The headers
         # on this table are "Job Title" , "Start Date" , "End date" and "Description"
-
+        emp_table = form.find_element_by_xpath('//table[@id=\'table_employment\']')
+        emp_header_fields = emp_table.find_elements_by_xpath('//thead/tr/th/label')
+        
+        self.assertIn("Job Title",emp_header_fields[0].text)
+        self.assertIn("Start date",emp_header_fields[1].text)
+        self.assertIn("End date",emp_header_fields[2].text)
+        self.assertIn("Description",emp_header_fields[3].text)
         # James needs to add some new employment, so he presses the button with the text 'Add New Employment'
+        add_employment_button = form.find_element_by_xpath('//button[@id=\'add_employment\']')
+        self.assertEqual("Add New Employment",add_qualifaction_button.text,f"Expected button text {'Add New Employment'}, got {add_employment_button.text} instead.")
+        add_employment_button.click()
 
         # The table now has an additional row, with a text input area for each column of the table
-        # In the text box for the row 'Title' James writes 'Software Development (the testing company)'
+        emp_tbody = emp_table.find_element_by_tag_name("tbody")
+        emp_first_row = emp_tbody.find_element_by_tag_name("tr")
+        emp_cells = emp_first_row.find_elements_by_tag_name("td")
 
-        # In the text box for the row 'Start Date' James replaces the default with '01/08/2020'
+        # In the text box for the row 'Title' James writes 'Software Development (the testing company)'
+        emp_txt_title = emp_cells[0].find_element_by_tag_name("input")
+        emp_txt_title.send_keys("MSci Testing, Driving and Developing")
+
+       # In the text box for the row 'Start Date' James replaces the default with '01/08/2020'
+        emp_txt_sd =  emp_cells[1].find_element_by_tag_name("input")
+        emp_txt_sd.send_keys(Keys.CONTROL + "a")
+        emp_txt_sd.send_keys(Keys.DELETE)
+        emp_txt_sd.send_keys("01/08/2020")
 
         # In the text box for the row 'End Date' James replaces the default with '31/08/2020'
+        emp_txt_ed = emp_cells[2].find_element_by_tag_name("input")
+        emp_txt_ed.send_keys(Keys.CONTROL + "a")
+        emp_txt_ed.send_keys(Keys.DELETE)
+        emp_txt_ed.send_keys("31/08/2020")
 
         # The 'Description' column has a larger text box. In it James writes 'I was lucky enough to spend a month at this job.'
-        
+        emp_txt_desc = emp_cells[3].find_element_by_tag_name("textarea")
+        emp_txt_desc.send_keys("I was lucky enough to spend a month at this job.")  
 
-
+        self.fail("Finish the test!")
         # There is a final section at the bottom called 'Projects and Interests'
         # James presses the button labeled 'Add another interest/project'
         # In the text box that appears he types 'The biology of goats'
@@ -183,7 +224,7 @@ class NewVisitorTest(LiveServerTestCase):
         # he entered is preserved    
 
 
-        self.fail("Finish the test")
+        
 
 
         

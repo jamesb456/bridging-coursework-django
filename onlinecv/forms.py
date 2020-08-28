@@ -17,4 +17,4 @@ class CVForm(forms.ModelForm):
 
 
 
-QualFormSet = inlineformset_factory(CV,Qualification,fields=('title','start_date','end_date','description'),labels=('Title','Start Date','End Date','Description'),extra=0,can_delete=False)
+QualFormSet = inlineformset_factory(CV,Qualification,fields=('title','start_date','end_date','description'),extra=0,can_delete=False)

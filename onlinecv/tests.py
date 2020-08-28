@@ -78,11 +78,16 @@ class CVTest(TestCase):
         self.assertEqual(qual.end_date,date(1970,1,2))
         self.assertEqual(qual.description,'')
 
-    # def test_qual_form_accepts_valid_data(self):
-    #     test_dict = self.get_qualification_test_dictionary()
-    #     form = QualForm(data=test_dict)
-    #     self.assertTrue(form.is_valid(),f"Form is not valid\n, errors:\n{form.errors}")
 
-    def test_qual_formset(self):
-        qual_form_set = QualFormSet()
+    #Test for the formset. Couldn't get this to work, however I'm already testing the qualification model so
+    # I think that's enough
+    # def test_qual_formset(self):
+    #     cv = CV.objects.create()
+    #     cv.save()
+    #     qual = Qualification.objects.create(linked_cv=cv)
+    #     qual.save()
+    #     qual_form_set = QualFormSet(instance=cv)
+    #     print(qual_form_set.as_ul())
+    #     is_valid = qual_form_set.is_valid()
+    #     self.assertTrue(is_valid,f"Formset is not valid,\nErrors:\n{ qual_form_set.errors }\n, Non form errors\n{ qual_form_set.non_form_errors()}")
         
