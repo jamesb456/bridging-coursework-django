@@ -4,8 +4,9 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Edit CV</h1>
+   
     <form method="POST" id="form_edit_cv" autocomplete="off">{% csrf_token %}
+        <h1>Edit CV</h1>
         {{ form.non_field_errors }}
         <div class="fieldWrapper">
             {{ form.email.errors }}
@@ -27,8 +28,9 @@
             {{ form.personal_statement.label_tag }}
             {{ form.personal_statement }}
         </div>
+        <hr />
         <h2 id="header_education">Education</h2>
-        <h3 id="header_qual">Qualifications</h3>
+        <hr />
         {% for field in formset_qual.management_form %}
             {{ field}}
         {% endfor %}
@@ -59,8 +61,9 @@
             </tbody>
         </table>
         <button type="button" class="btn btn-primary" id="add_qualification">Add another qualification</button>
+        <hr />
         <h2 id="header_technical">Technical skills</h2>
-
+        <hr />
         {% for field in formset_skill.management_form %}
             {{field.errors}}{{field}}
         {% endfor %}
@@ -89,9 +92,44 @@
 
         <button type="button" class="btn btn-primary" id="add_skill">Add another skill</button>
 
+        <hr />
+        <h2 id="header_employment">Employment</h2>
+        <hr />
+        {% for field in formset_emp.management_form %}
+            {{ field }}
+        {% endfor %}
+        <div id="empty_form_emp" style="display:none">
+            <span class="row-replace">
+                {% for field in formset_emp.empty_form.visible_fields %}
+                    <i class="data-replace">{{field.errors}}{{field}}</i>
+                {% endfor %}
+            </span>
+        </div>
+        <table id="table_employment" class="table">
+            <thead class="thead-light">
+                {% for field in formset_emp.empty_form.visible_fields %}
+                    <th>{{ field.label_tag }}</th>
+                {% endfor %}
+                    <th />
+            </thead>
+            <tbody id="table_body_emp">
+            {% for form in formset_emp %}
+                <tr>
+                {% for field in form.visible_fields %}
+                    <td>{{field.errors}}{{field}}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="button" class="btn btn-primary" id="add_employment">Add new employment</button>
+        <hr />
+        <hr />
 
-
-        <button type="submit" class="btn btn-secondary">Save</button>
+        <div id="form-footer">
+            <button type="submit" class="btn btn-secondary">Save</button>
+        </div>
     </form>
 
     <script>
@@ -112,6 +150,16 @@
         $('#skill_set').append($('#empty_form_skill').html().replace(/__prefix__/g, form_idx)
         .replace(/__counter__/g,parseInt(form_idx)+1));
         $('#id_skill_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+    $('#add_employment').click(function() {
+        var form_idx = $('#id_employment_set-TOTAL_FORMS').val();
+        $('#table_body_emp').append($('#empty_form_emp').html().replace(/__prefix__/g, form_idx)
+        .replace(/<span class="row-replace">/g,"<tr>")
+        .replace(/<\/span>/g,"<\/tr>")
+        .replace(/<i class="data-replace">/g,"<td>")
+        .replace(/<\/i>/g,"<\/td>")
+        );
+        $('#id_employment_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     }); 
     </script>
 {% endblock%}

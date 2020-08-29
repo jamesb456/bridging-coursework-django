@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .forms import CVForm, QualFormSet
-from .models import CV, Qualification, Skill
+from .models import CV, Qualification, Skill , Employment
 from datetime import date
 # Create your tests here.
 class CVTest(TestCase):
@@ -72,8 +72,6 @@ class CVTest(TestCase):
         qual.save()
         self.assertEqual(qual.linked_cv,cv)
         self.assertEqual(qual.title,'')
-
-
         self.assertEqual(qual.start_date,date(1970,1,1))
         self.assertEqual(qual.end_date,date(1970,1,2))
         self.assertEqual(qual.description,'')
@@ -86,6 +84,17 @@ class CVTest(TestCase):
         skill.save()
         self.assertEqual(skill.linked_cv,cv)
         self.assertEqual(skill.description,'')
+
+    def test_employment_model(self):
+        cv = CV.objects.create()
+        cv.save()
+        employment = Employment.objects.create(linked_cv=cv)
+        employment.save()
+        self.assertEqual(employment.linked_cv,cv)
+        self.assertEqual(employment.job_title,'')
+        self.assertEqual(employment.start_date,date(1970,1,1))
+        self.assertEqual(employment.end_date,date(1970,1,2))
+        self.assertEqual(employment.description,'')
 
     #Test for the formset. Couldn't get this to work, however I'm already testing the qualification model so
     # I think that's enough

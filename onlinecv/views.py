@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import CVForm, QualFormSet, SkillFormSet
+from .forms import CVForm, QualFormSet, SkillFormSet, EmploymentFormSet
 from .models import CV, Qualification
 # Create your views here.
 def cv_view(request):
@@ -13,5 +13,11 @@ def edit_cv_view(request):
 
         formset_qual = QualFormSet(instance=cv)
         formset_skill = SkillFormSet(instance=cv)
+        formset_emp = EmploymentFormSet(instance=cv)
         
-        return render(request,"onlinecv/edit_cv.html",{'form' : form,'formset_qual' : formset_qual , 'formset_skill' : formset_skill})
+        return render(request,"onlinecv/edit_cv.html",{
+            'form' : form,
+            'formset_qual' : formset_qual , 
+            'formset_skill' : formset_skill,
+            'formset_emp' : formset_emp,
+        })
