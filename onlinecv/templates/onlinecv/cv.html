@@ -1,4 +1,6 @@
+
 {% extends 'onlinecv/base.html' %}
+{% load markdown_format %}
 {% block title %}
     CV
 {% endblock %}
@@ -36,7 +38,7 @@
                         </ul>
                         <div class="card-body">
                             <p class="qual_description">
-                                {{ qual.description}}
+                                {{ qual.description | markdown | safe}}
                             </p>
                         </div>
                     </div>
@@ -68,7 +70,7 @@
                         </ul>
                         <div class="card-body">
                             <p class="emp_description">
-                                {{ emp.description}}
+                                {{ emp.description | markdown | safe}}
                             </p>
                         </div>
                     </div>
