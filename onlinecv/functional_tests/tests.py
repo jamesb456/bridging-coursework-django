@@ -39,10 +39,10 @@ class NewVisitorTest(LiveServerTestCase):
         return element
 
     def create_valid_cv(self):
-        cv = CV.objects.create(author=self.admin_user,email="stevejobs@apple.com",github_profile="https://github.com/jamesb456",personal_statement="Hello. ",linkedin_profile="https://www.linkedin.com/in/james-bray-9548a7172")
-        cv.save(commit=False)
-        qual = Qualification.objects.create(linked_cv=cv,title="A qualification",start_date=date(2017,3,6),end_date=(2017,4,7),description="A qualification description")
-        emp = Employment.objects.create(linked_cv=cv,job_title="A job",start_date=date(2018,3,6),end_date=(2018,7,29),description="A job description")
+        cv = CV.objects.create(author=self.admin_user,email="james.bray467@gmail.com",github_profile="https://github.com/jamesb456",personal_statement="Hello. ",linkedin_profile="https://www.linkedin.com/in/james-bray-9548a7172")
+        cv.save()
+        qual = Qualification.objects.create(linked_cv=cv,title="A qualification",start_date=date(2017,3,6),end_date=date(2017,4,7),description="A qualification description")
+        emp = Employment.objects.create(linked_cv=cv,job_title="A job",start_date=date(2018,3,6),end_date=date(2018,7,29),description="A job description")
         sk = Skill.objects.create(linked_cv=cv,description="A skill")
         sk2 = Skill.objects.create(linked_cv=cv,description="Another skill")
         interest = Interest.objects.create(linked_cv=cv,description="A project or interest")
@@ -52,18 +52,8 @@ class NewVisitorTest(LiveServerTestCase):
         sk.save()
         sk2.save()
         interest.save()
-        interest2.save()
-        cv.save()
-
-
-    def create_valid_cv_empty(self):
-        cv = CV.objects.create(author=self.admin_user,email="stevejobs@apple.com",github_profile="https://github.com/jamesb456",personal_statement="Hello. ",linkedin_profile="https://www.linkedin.com/in/james-bray-9548a7172")
-        cv.save()
-
-    def test_can_edit_cv(self):
-        #assume an existing cv already exists
-        self.create_valid_cv_empty()
-        #testing editing cv so we need to be logged in
+  
+    def login_and_set_cookies(self):
         self.client.login(username='jamesb', password='jam') 
         #this bit needed for login to work correctly
         #so selenium actualy thinks we are logged in
@@ -73,10 +63,19 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.refresh() 
         self.browser.get(self.live_server_url + '/admin/')
 
+    def create_valid_cv_empty(self):
+        cv = CV.objects.create(author=self.admin_user,email="stevejobs@apple.com",github_profile="https://github.com/jamesb456",personal_statement="Hello. ",linkedin_profile="https://www.linkedin.com/in/james-bray-9548a7172")
+        cv.save()
+
+    def test_can_edit_cv(self):
+        #assume an existing cv already exists
+        self.create_valid_cv_empty()
+        self.login_and_set_cookies()
+
         # James would like to edit his own CV. He first navigates to the web page for it on his web browser
         self.browser.get(self.live_server_url + '/cv/')
 
-        time.sleep(5)
+       
         # The page's title is 'CV'
         self.assertEqual('CV',self.browser.title,f"Expected page title {'CV'}, got {self.browser.title}.")
 
@@ -264,14 +263,18 @@ class NewVisitorTest(LiveServerTestCase):
         # In the text box that appears he types 'The biology of goats'
         txt_interest = self.get_form_element_from_label(form,"Project/Interest 1:")
         txt_interest.send_keys("The biology of goats")
-        # Finally James presses the 'Save' button. Upon the page being reloaded, he sees that the data
-        # he entered is preserved    
+        # Finally James presses the 'Save' button. 
         btn_save = form.find_element_by_xpath("//button[@id=\'save_form\']")
         btn_save.click()
+        # Upon the page being reloaded, he sees a message confirming that his
+        # changes have been saved
+        form_status = self.browser.find_element_by_id("form_status")
+        self.assertIn("Changes saved",form_status.text)
         
 
     #new functional test to check that the CV can be created when none exists
     def test_can_create_new_cv(self):
+        self.login_and_set_cookies()
         #James wants to create his CV, but has not done so yet
         
         #He visits the web page         
@@ -280,6 +283,7 @@ class NewVisitorTest(LiveServerTestCase):
         #The website contains a message conveying that the cv could not be found
         error_heading = self.browser.find_element_by_tag_name("h1")
         self.assertIn("CV not found",error_heading.text)
+        
         # However James sees a button that would allow him to create the CV he needs to.
         create_cv = self.browser.find_element_by_id("btn-create-cv")
         self.assertEqual('Create CV',create_cv.text,f"Expected text {'Create CV'}, got {create_cv.text}")
@@ -287,6 +291,7 @@ class NewVisitorTest(LiveServerTestCase):
         # He clicks the button and lands on a page titled 'Edit CV'
         self.assertEqual(self.browser.title,"Edit CV",f"Expected text {'Edit CV'}, got {self.browser.title}")
         # Satisfied, he stops here
+        
 
         
         
@@ -295,25 +300,41 @@ class NewVisitorTest(LiveServerTestCase):
         # helper method to create a valid cv to test
         self.create_valid_cv()
         # Edith want's to view someone's CV. She goes to their
-        # website to find a link to it
+        # website to find it
         self.browser.get(self.live_server_url + "/cv/")
-
-        # The page has a link to a CV in the header,
-        # which she clicks on.
-        self.fail("Finish this test!")
+        
+        
         # She finds that she is immediately presented with
-        # their name, picture and contact details i.e
+        # their name and contact details i.e
         # * Github profile
         # * LinkedIn Profile
         # * e-mail
+        #
+        # She can click on a link for both the linked in and github profiles to take her to
+        # those respective websites
+        full_name = self.browser.find_element_by_id("name")
+        self.assertIn("James Bray",full_name.text)
 
+        #(planning to use embeds here so the test has to be a bit more complicated)
+        #we want to know that you can click on a link to find my various profiles
+        github_profile = self.browser.find_element_by_id("github_profile")
+        self.assertIn("https://github.com",github_profile.get_attribute("outerHTML"))
+
+        linkedin_profile = self.browser.find_element_by_id("linkedin_profile")
+        self.assertIn("https://www.linkedin.com/in/",linkedin_profile.get_attribute("outerHTML"))
+        email_address = self.browser.find_element_by_id("email_address")
+        self.assertIn("james.bray467@gmail.com",email_address.text)
+
+        
         # Further down the page she sees a section of the page titled 
         # 'Personal Profile'
-
+        heading_personal = self.browser.find_element_by_xpath("//h2[@id=\'heading_personal\']")
+        self.assertEqual("Personal Profile",heading_personal.text)
         # This section contains a short paragraph of text describing the person
-
+        personal_profile_text = self.browser.find_element_by_xpath("//p[@id=\'personal_profile\']")
         # Below this section she sees another titled 'Education'
-
+        heading_education= self.browser.find_element_by_xpath("//h2[@id=\'heading_education\']")
+        self.assertEqual("Education",heading_education.text)
         # This section contains a series of subsections, each with a:
         # * Title
         # * Date the qualification was taken during
@@ -340,5 +361,7 @@ class NewVisitorTest(LiveServerTestCase):
         # secure. She guesses the url for editing the CV, and navigates to it
         # She is satisfied when a page showing the page is forbidden for her to access
         # appears
+
+        self.fail("Finish this test!")
     
 

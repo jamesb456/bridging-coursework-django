@@ -9,8 +9,16 @@ from .models import CV, Qualification
 # Create your views here.
 def cv_view(request):
     #hardcode to only see my CV (this is bad)
-    cv = get_object_or_404(CV,author=User.objects.get(username="jamesb"))
-    return render(request,"onlinecv/cv.html" , {'cv' :cv})
+    cv=None
+    cv_exists = False
+    try:
+        cv = CV.objects.get(author=User.objects.get(username="jamesb"))
+        cv_exists = True
+    except CV.DoesNotExist:
+        pass
+    can_edit = request.user == User.objects.get(username="jamesb")
+    return render(request,"onlinecv/cv.html" , {'cv' :cv, 'cv_exists' : cv_exists, 'can_edit' : can_edit})
+    
 
 # @login_required would use this if I put a login screen
 def edit_cv_view(request):
@@ -22,6 +30,7 @@ def edit_cv_view(request):
         cv.save()
     
     form = CVForm(instance=cv)
+    form_status = None
     author = cv.author
     if request.method =="POST":
         form = CVForm(request.POST, instance=cv)
@@ -32,11 +41,16 @@ def edit_cv_view(request):
             formset_emp = EmploymentFormSet(request.POST,instance=saved_cv)
             formset_interest = InterestFormSet(request.POST,instance=saved_cv)
             if(formset_qual.is_valid() and formset_skill.is_valid() and formset_emp.is_valid() and formset_interest.is_valid()):
+                form_status = "success"
                 saved_cv.save()
                 formset_qual.save()
                 formset_skill.save()
                 formset_emp.save()
                 formset_interest.save()
+            else:
+                print(formset_qual.is_valid(), formset_skill.is_valid() , formset_emp.is_valid() , formset_interest.is_valid())
+                print(formset_skill.errors)
+                form_status = "error"
             
                 
 
@@ -46,7 +60,8 @@ def edit_cv_view(request):
                 'formset_skill' : formset_skill,
                 'formset_emp' : formset_emp,
                 'formset_interest' :formset_interest,
-                'author' : author
+                'author' : author,
+                'form_status' : form_status
             })
     else:
         formset_qual = QualFormSet(instance=cv)

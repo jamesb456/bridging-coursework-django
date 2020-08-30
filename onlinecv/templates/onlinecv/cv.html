@@ -5,10 +5,34 @@
 
 {% block header%}
 <header id="header">
-    <a href="{% url 'edit_cv_view' %}" id="btn-edit-cv" class="btn btn-primary">Edit CV</a>
+    {% if cv_exists and can_edit %}
+        <a href="{% url 'edit_cv_view' %}" id="btn-edit-cv" class="btn btn-primary">Edit CV</a>
+    {% endif %}
 </header>
 {% endblock %}
 
 {% block content %}
+    <h2 id="name"><span class="fas fa-user-circle"></span> James Bray</h2>
+    {% if cv_exists %}
+        <div id="personal_profile"> 
+            <div id="github_profile"><span class="fab fa-github-alt"></span><a href="{{cv.github_profile}}"> {{cv.github_profile}}</a></div>
+            <div id="email_address"><span class="far fa-envelope"></span> {{cv.email}}</div>
+            <div id="linkedin_profile" class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="james-bray-9548a7172"><a class="LI-simple-link" href='{{cv.linkedin_profile}}'>James Bray</a></div>
+        </div>
+        <h2 id="heading_personal">Personal Profile</h2>
+        <p id="personal_profile">
+            {{cv.personal_statement}}
+        </p>
+        <h2 id="heading_education">Education</h2>
+       
+    {% else %}
+        <h1>CV not found.
+          <small class="text-muted">(this wasn't supposed to happen)</small>
+        </h1>
+
+        {% if can_edit %}
+             <a href="{% url 'edit_cv_view' %}" id="btn-create-cv" class="btn btn-success">Create CV</a>
+        {% endif %}
+    {% endif %}
 
 {% endblock %}

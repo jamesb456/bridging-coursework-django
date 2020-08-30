@@ -4,10 +4,17 @@
 {% endblock %}
 
 {% block content %}
-   
+
     <form method="POST" id="form_edit_cv" autocomplete="off">{% csrf_token %}
         <h1>Edit CV</h1>
         </h2>(for user {{ author }}) </h2>
+        {% if form_status%}
+            {% if form_status == "success" %}
+                <div id="form_status" class="alert alert-success" role="alert">Changes saved to the database.</div>
+            {% elif form_status == "error"%}
+                <div id="form_status" class="alert alert-danger" role="alert">There were errors upon saving your changes.</div>
+            {% endif %}
+        {% endif %}
         {{ form.non_field_errors }}
         <hr />
         <h2 id="header_profile">Personal Profile</h2>
@@ -81,6 +88,7 @@
             {% for field in formset_skill.empty_form.visible_fields %}
                 {{ field}}{{ field.errors}}
             {% endfor %}
+            {{ formset_skill.empty_form.id}}
             </p>
         </div>
         <div id="skill_set">
@@ -91,6 +99,7 @@
             {% for field in form.visible_fields %}
                 {{ field }}{{ field.errors}}
             {% endfor %}
+            {{ form.id}}
             </p>
         {% endfor %}
         </div>
@@ -108,6 +117,7 @@
                 {% for field in formset_emp.empty_form.visible_fields %}
                     <i class="data-replace">{{field}}{{field.errors}}</i>
                 {% endfor %}
+                    <i class="hidden-replace">{{ formset_emp.empty_form.id }}</i>
             </span>
         </div>
         <table id="table_employment" class="table">
@@ -123,6 +133,7 @@
                     {% for field in form.visible_fields %}
                         <td>{{field}}{{field.errors}}</td>
                     {% endfor %}
+                    <td class="hidden">{{ form.id }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -142,6 +153,8 @@
             {% for field in formset_interest.empty_form.visible_fields %}
                 {{ field}}{{ field.errors}}
             {% endfor %}
+            {{ formset_interest.empty_form.id}}
+                
             </p>
         </div>
         <div id="interest_set">
@@ -152,6 +165,7 @@
             {% for field in form.visible_fields %}
                 {{ field }}{{ field.errors}}
             {% endfor %}
+            {{form.id}}
             </p>
         {% endfor %}
         </div>

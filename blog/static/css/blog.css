@@ -6,10 +6,13 @@ h2 a{
     color: #0038A8;
 }
 .page-header{
-    background-color: #cfcdcd;
+    background-color: #0038A8;
     margin-top: 0;
     margin-bottom: 20;
     padding: 10px 10px 10px 10px;
+}
+#header-title{
+    font-size: 2em;
 }
 
 #header-title a{
