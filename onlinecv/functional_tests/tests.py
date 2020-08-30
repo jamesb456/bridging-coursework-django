@@ -27,6 +27,8 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser = webdriver.Firefox(firefox_binary=self.binary)
         self.admin_user = User.objects.create_superuser(username='jamesb',password='jam',email="stevejobs@apple.com")
         self.admin_user.save()
+        self.date_regex = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9][0-9] - (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9][0-9]"
+
         
     def tearDown(self):  
         self.browser.quit()
@@ -339,29 +341,57 @@ class NewVisitorTest(LiveServerTestCase):
         # * Title
         # * Date the qualification was taken during
         # * Description
+        # The date contains the start and end dates of the qualification, down to the month
+        # separated by a dash
+
+        qualification_section = self.browser.find_element_by_xpath("//div[@id=\'qualifications\']")
+        qualifications = qualification_section.find_elements_by_class_name("qualification")
+        self.assertTrue(qualifications,"List of qualifications was empty")
+        for qual in qualifications:
+            qual_title = qual.find_element_by_class_name("qual_title")
+            qual_date = qual.find_element_by_class_name("qual_date")
+            qual_desc = qual.find_element_by_class_name("qual_description")
+            self.assertRegexpMatches(qual_date.text,self.date_regex)
+
+
+
 
         # Below this section is one titled 'Technical skills'
-
+        heading_technical = self.browser.find_element_by_xpath("//h2[@id=\'heading_technical\']")
+        self.assertEqual("Technical Skills",heading_technical.text)
         # This section contains a bullet pointed list of text
-
+        list_technical = self.browser.find_element_by_xpath("//ul[@id=\'list_technical\']")
         # Below this section is one titled 'Previous Employment'
-
+        heading_employment = self.browser.find_element_by_xpath("//h2[@id=\'heading_employment\']")
+        self.assertEqual("Employment",heading_employment.text)
         # This section contains a series of subsections, each with a:
         # * Job Title
         # * Date the job was/is taken
         # * Description
+        employment_section = self.browser.find_element_by_xpath("//div[@id=\'employments\']")
+        employments = employment_section.find_elements_by_class_name("employment")
+        self.assertTrue(employments,"List of employments was empty")
+        for emp in employments:
+            emp_title = emp.find_element_by_class_name("emp_title")
+            emp_date = emp.find_element_by_class_name("emp_date")
+            emp_desc = emp.find_element_by_class_name("emp_description")
 
+            self.assertRegexpMatches(emp_date.text,self.date_regex)
 
         # Below this section is one titled 'Projects & Interests'
-
+        heading_interests = self.browser.find_element_by_xpath("//h2[@id=\'heading_interests\']")
+        self.assertEqual("Projects & Interests",heading_interests.text)
         # This section contains a bullet pointed list of text
+        list_interests = self.browser.find_element_by_xpath("//ul[@id=\'list_interests\']")
 
         # Finally as they are a Computer Science student, Edith
         # would like to make sure that the website is in some way
         # secure. She guesses the url for editing the CV, and navigates to it
         # She is satisfied when a page showing the page is forbidden for her to access
         # appears
-
-        self.fail("Finish this test!")
+        self.browser.get(self.live_server_url + '/cv/edit/')
+        
+        self.assertIn("403 Forbidden",self.browser.page_source)
+        
     
 

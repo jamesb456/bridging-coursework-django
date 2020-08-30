@@ -7,6 +7,10 @@
     font-size: 4em;
 }
 
-#personal_profile{
+#contact_information{
     font-size: 1.5em;
+}
+.card{
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

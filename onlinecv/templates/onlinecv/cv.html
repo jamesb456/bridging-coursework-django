@@ -12,23 +12,86 @@
 {% endblock %}
 
 {% block content %}
-    <h2 id="name"><span class="fas fa-user-circle"></span> James Bray</h2>
+    
     {% if cv_exists %}
-        <div id="personal_profile"> 
+        <div id="contact_information"> 
+            <div id="name"><span class="fas fa-user-circle"></span> James Bray</div>
             <div id="github_profile"><span class="fab fa-github-alt"></span><a href="{{cv.github_profile}}"> {{cv.github_profile}}</a></div>
             <div id="email_address"><span class="far fa-envelope"></span> {{cv.email}}</div>
-            <div id="linkedin_profile" class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="james-bray-9548a7172"><a class="LI-simple-link" href='{{cv.linkedin_profile}}'>James Bray</a></div>
+            <div id="linkedin_profile" class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="james-bray-9548a7172"><a class="LI-simple-link" href='{{cv.linkedin_profile}}'><i class="fab fa-linkedin"></i> James Bray</a></div>
         </div>
         <h2 id="heading_personal">Personal Profile</h2>
         <p id="personal_profile">
             {{cv.personal_statement}}
         </p>
         <h2 id="heading_education">Education</h2>
+
+        <div id="qualifications">
+            {% if qualifications %}
+                {% for qual in qualifications %}
+                    <div class="card qualification">
+                        <h5 class="card-header qual_title">{{ qual.title}}</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-muted qual_date"><span class="fas fa-calendar-alt"></span> {{ qual.start_date | date:"M y" }} - {{qual.end_date | date:"M y"}}</li>
+                        </ul>
+                        <div class="card-body">
+                            <p class="qual_description">
+                                {{ qual.description}}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {%else %}
+                <div class="bg-faded">No qualifications found!</div>
+            {% endif%}
+        </div>
+
+        <h2 id="heading_technical">Technical Skills</h2>
+        <ul id="list_technical">
+            {% if skills %}
+                {% for skill in skills%}
+                    <li>{{skill.description}}</skill>
+                {% endfor %}
+            {% else %}
+                <li>Tell James to add some skills<li>
+            {% endif %}
+        </ul>
+
+        <h2 id="heading_employment">Employment</h2>
+        <div id="employments">
+            {% if employments %}
+                {% for emp in employments %}
+                    <div class="card employment">
+                        <h5 class="card-header emp_title">{{ emp.job_title}}</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-muted emp_date"><span class="fas fa-calendar-alt"></span> {{ emp.start_date | date:"M y" }} - {{emp.end_date | date:"M y"}}</li>
+                        </ul>
+                        <div class="card-body">
+                            <p class="emp_description">
+                                {{ emp.description}}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {%else %}
+                <div class="bg-faded">No jobs found!</div>
+            {% endif%}
+        </div>
+
+        <h2 id="heading_interests">Projects & Interests</h2>
+        <ul id="list_interests">
+            {% if interests %}
+                {% for interest in interests%}
+                    <li>{{interest.description}}</skill>
+                {% endfor %}
+            {% else %}
+                <li>Tell James to add some interests<li>
+            {% endif %}
+        </ul>
        
     {% else %}
-        <h1>CV not found.
-          <small class="text-muted">(this wasn't supposed to happen)</small>
-        </h1>
+        <h1>CV not found.</h1>
+        <h3><small class="text-muted">(this wasn't supposed to happen)</small></h3>
 
         {% if can_edit %}
              <a href="{% url 'edit_cv_view' %}" id="btn-create-cv" class="btn btn-success">Create CV</a>

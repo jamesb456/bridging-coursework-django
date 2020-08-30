@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 
 from .forms import CVForm, QualFormSet, SkillFormSet, EmploymentFormSet, InterestFormSet
 from time import sleep
-from .models import CV, Qualification
-# Create your views here.
+from .models import CV, Qualification , Skill, Interest, Employment
+# Create your views here. 
 def cv_view(request):
     #hardcode to only see my CV (this is bad)
     cv=None
@@ -17,13 +17,29 @@ def cv_view(request):
     except CV.DoesNotExist:
         pass
     can_edit = request.user == User.objects.get(username="jamesb")
+    
+    if(cv_exists):
+        quals = Qualification.objects.filter(linked_cv=cv)
+        skills = Skill.objects.filter(linked_cv=cv)
+        employments = Employment.objects.filter(linked_cv=cv)
+        interests = Interest.objects.filter(linked_cv=cv)
+        return render(request,"onlinecv/cv.html" , {
+            'cv' :cv, 
+            'cv_exists' : cv_exists, 
+            'can_edit' : can_edit, 
+            'qualifications' :quals,
+            'skills' : skills,
+            'employments' : employments,
+            'interests' : interests
+        })
+
     return render(request,"onlinecv/cv.html" , {'cv' :cv, 'cv_exists' : cv_exists, 'can_edit' : can_edit})
     
 
 # @login_required would use this if I put a login screen
 def edit_cv_view(request):
     if(request.user != User.objects.get(username="jamesb")):
-        raise PermissionDenied(f"{request.user.name} cannot edit jamesb's CV")
+        raise PermissionDenied(f"{request.user.username} cannot edit jamesb's CV")
 
     (cv, created) = CV.objects.get_or_create(author=request.user)
     if(created):
