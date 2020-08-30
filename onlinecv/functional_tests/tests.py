@@ -8,6 +8,9 @@ from selenium import webdriver
 from django.test import LiveServerTestCase
 from django.contrib.auth.models import User
 
+from onlinecv.models import CV, Employment, Skill, Interest, Qualification
+from datetime import date
+
 import unittest
 import time
 
@@ -22,10 +25,9 @@ class NewVisitorTest(LiveServerTestCase):
         #so i had to manually point it to it
         self.binary = FirefoxBinary('/usr/lib/firefox/firefox')
         self.browser = webdriver.Firefox(firefox_binary=self.binary)
-        self.admin_user = User.objects.create(username='james')
-        self.admin_user.set_password('jam')
+        self.admin_user = User.objects.create_superuser(username='jamesb',password='jam',email="stevejobs@apple.com")
         self.admin_user.save()
-
+        
     def tearDown(self):  
         self.browser.quit()
 
@@ -36,20 +38,56 @@ class NewVisitorTest(LiveServerTestCase):
         element = form.find_element_by_id(str(element_id))
         return element
 
+    def create_valid_cv(self):
+        cv = CV.objects.create(author=self.admin_user,email="stevejobs@apple.com",github_profile="https://github.com/jamesb456",personal_statement="Hello. ",linkedin_profile="https://www.linkedin.com/in/james-bray-9548a7172")
+        cv.save(commit=False)
+        qual = Qualification.objects.create(linked_cv=cv,title="A qualification",start_date=date(2017,3,6),end_date=(2017,4,7),description="A qualification description")
+        emp = Employment.objects.create(linked_cv=cv,job_title="A job",start_date=date(2018,3,6),end_date=(2018,7,29),description="A job description")
+        sk = Skill.objects.create(linked_cv=cv,description="A skill")
+        sk2 = Skill.objects.create(linked_cv=cv,description="Another skill")
+        interest = Interest.objects.create(linked_cv=cv,description="A project or interest")
+        interest2 = Interest.objects.create(linked_cv=cv,description="Another project or interest")
+        qual.save()
+        emp.save()
+        sk.save()
+        sk2.save()
+        interest.save()
+        interest2.save()
+        cv.save()
+
+
+    def create_valid_cv_empty(self):
+        cv = CV.objects.create(author=self.admin_user,email="stevejobs@apple.com",github_profile="https://github.com/jamesb456",personal_statement="Hello. ",linkedin_profile="https://www.linkedin.com/in/james-bray-9548a7172")
+        cv.save()
+
     def test_can_edit_cv(self):
-        
-        #self.client.login(username='james',password='jam')
+        #assume an existing cv already exists
+        self.create_valid_cv_empty()
+        #testing editing cv so we need to be logged in
+        self.client.login(username='jamesb', password='jam') 
+        #this bit needed for login to work correctly
+        #so selenium actualy thinks we are logged in
+        cookie = self.client.cookies['sessionid']
+        self.browser.get(self.live_server_url + '/admin/') 
+        self.browser.add_cookie({'name': 'sessionid', 'value': cookie.value, 'secure': False, 'path': '/'})
+        self.browser.refresh() 
+        self.browser.get(self.live_server_url + '/admin/')
+
         # James would like to edit his own CV. He first navigates to the web page for it on his web browser
         self.browser.get(self.live_server_url + '/cv/')
 
-        
+        time.sleep(5)
         # The page's title is 'CV'
         self.assertEqual('CV',self.browser.title,f"Expected page title {'CV'}, got {self.browser.title}.")
 
         # In the header he sees a link to edit his CV. He clicks on it
         link = self.browser.find_element_by_xpath('//header[@id=\'header\']/a[@id=\'btn-edit-cv\']')
         self.assertEqual('Edit CV',link.text,f"Expected text {'Edit CV'}, got {link.text}")
+        
+        
+
         link.click()
+
         # He is taken to a page titled 'Edit CV'
         
         self.assertEqual('Edit CV',self.browser.title,f"Expected title of page to be {'Edit CV'}, got {self.browser.title} instead.")
@@ -174,8 +212,8 @@ class NewVisitorTest(LiveServerTestCase):
 
       
         # Further down from this is another section called 'Employment'
-        header_technical = form.find_element_by_xpath("//h2[@id=\'header_employment\']")
-        self.assertEqual("Employment",header_technical.text)
+        header_employment = form.find_element_by_xpath("//h2[@id=\'header_employment\']")
+        self.assertEqual("Employment",header_employment.text)
         # Like the 'Qualifications' section, this contains an empty table. The headers
         # on this table are "Job title" , "Start date" , "End date" and "Description"
         emp_table = form.find_element_by_xpath('//table[@id=\'table_employment\']')
@@ -215,22 +253,47 @@ class NewVisitorTest(LiveServerTestCase):
         emp_txt_desc = emp_cells[3].find_element_by_tag_name("textarea")
         emp_txt_desc.send_keys("I was lucky enough to spend a month at this job.")  
 
-        self.fail("Finish the test!")
+        
         # There is a final section at the bottom called 'Projects and Interests'
+        header_projects_interests = form.find_element_by_xpath("//h2[@id=\'header_projects_interests\']")
+        self.assertEqual("Projects/Interests",header_projects_interests.text)
         # James presses the button labeled 'Add another interest/project'
+        btn_add_interest = form.find_element_by_xpath("//button[@id=\'add_interest\']")
+        self.assertEqual("Add another interest/project",btn_add_interest.text)
+        btn_add_interest.click()
         # In the text box that appears he types 'The biology of goats'
-        
-        # Finally James presses the 'Save' button. Upon the page reloaded he sees that the data
+        txt_interest = self.get_form_element_from_label(form,"Project/Interest 1:")
+        txt_interest.send_keys("The biology of goats")
+        # Finally James presses the 'Save' button. Upon the page being reloaded, he sees that the data
         # he entered is preserved    
-
-
+        btn_save = form.find_element_by_xpath("//button[@id=\'save_form\']")
+        btn_save.click()
         
 
+    #new functional test to check that the CV can be created when none exists
+    def test_can_create_new_cv(self):
+        #James wants to create his CV, but has not done so yet
+        
+        #He visits the web page         
+        self.browser.get(self.live_server_url + "/cv/")
+
+        #The website contains a message conveying that the cv could not be found
+        error_heading = self.browser.find_element_by_tag_name("h1")
+        self.assertIn("CV not found",error_heading.text)
+        # However James sees a button that would allow him to create the CV he needs to.
+        create_cv = self.browser.find_element_by_id("btn-create-cv")
+        self.assertEqual('Create CV',create_cv.text,f"Expected text {'Create CV'}, got {create_cv.text}")
+        create_cv.click()
+        # He clicks the button and lands on a page titled 'Edit CV'
+        self.assertEqual(self.browser.title,"Edit CV",f"Expected text {'Edit CV'}, got {self.browser.title}")
+        # Satisfied, he stops here
 
         
         
     
     def test_user_facing(self):
+        # helper method to create a valid cv to test
+        self.create_valid_cv()
         # Edith want's to view someone's CV. She goes to their
         # website to find a link to it
         self.browser.get(self.live_server_url + "/cv/")
