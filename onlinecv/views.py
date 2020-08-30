@@ -19,9 +19,9 @@ def cv_view(request):
     can_edit = request.user == User.objects.get(username="jamesb")
     
     if(cv_exists):
-        quals = Qualification.objects.filter(linked_cv=cv)
+        quals = Qualification.objects.filter(linked_cv=cv).order_by('start_date')
         skills = Skill.objects.filter(linked_cv=cv)
-        employments = Employment.objects.filter(linked_cv=cv)
+        employments = Employment.objects.filter(linked_cv=cv).order_by('start_date')
         interests = Interest.objects.filter(linked_cv=cv)
         return render(request,"onlinecv/cv.html" , {
             'cv' :cv, 
