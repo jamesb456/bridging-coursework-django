@@ -9,7 +9,10 @@
             <p>published: {{ post.published_date }}</p>
         </div>
         <p>{{ post.text| markdown_preview | safe }}</p>
-        <a href="{% url 'post_detail' pk=post.pk slug=post.slug%}" class="btn btn-primary">Read more</a>    
+        {% if post.is_long %}
+            <a href="{% url 'post_detail' pk=post.pk slug=post.slug%}" class="btn btn-primary">Read more</a>
+        {% endif %}
+        <hr />    
     </div>
 {% endfor %}
 {% endblock %}

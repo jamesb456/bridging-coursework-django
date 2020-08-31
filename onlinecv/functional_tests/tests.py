@@ -82,7 +82,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual('CV',self.browser.title,f"Expected page title {'CV'}, got {self.browser.title}.")
 
         # In the header he sees a link to edit his CV. He clicks on it
-        link = self.browser.find_element_by_xpath('//header[@id=\'header\']/a[@id=\'btn-edit-cv\']')
+        link = self.browser.find_element_by_xpath('//header[@id=\'header\']//a[@id=\'btn-edit-cv\']')
         self.assertEqual('Edit CV',link.text,f"Expected text {'Edit CV'}, got {link.text}")
         
         

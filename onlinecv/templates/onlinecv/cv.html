@@ -7,25 +7,44 @@
 
 {% block header%}
 <header id="header">
-    {% if cv_exists and can_edit %}
-        <a href="{% url 'edit_cv_view' %}" id="btn-edit-cv" class="btn btn-primary">Edit CV</a>
-    {% endif %}
+
+    <header class="page-header bg-secondary">
+        <nav class="navbar navbar-expand-lg">
+            {% include "common/navbar.html"%}
+            {% if cv_exists and can_edit %}
+                <a href="{% url 'edit_cv_view' %}" id="btn-edit-cv" class="btn btn-primary">Edit CV</a>
+            {% endif %}
+        </nav>
+    </header>
+
 </header>
 {% endblock %}
 
 {% block content %}
     
     {% if cv_exists %}
-        <div id="contact_information"> 
-            <div id="name"><span class="fas fa-user-circle"></span> James Bray</div>
-            <div id="github_profile"><span class="fab fa-github-alt"></span><a href="{{cv.github_profile}}"> {{cv.github_profile}}</a></div>
-            <div id="email_address"><span class="far fa-envelope"></span> {{cv.email}}</div>
-            <div id="linkedin_profile" class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="james-bray-9548a7172"><a class="LI-simple-link" href='{{cv.linkedin_profile}}'><i class="fab fa-linkedin"></i> James Bray</a></div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col border-right">
+                    <div class="d-flex justify-content-center">
+                        <div id="contact_information"> 
+                            <div id="name"><span class="fas fa-user-circle"></span> James Bray</div>
+                            <div id="github_profile"><span class="fab fa-github-alt"></span><a href="{{cv.github_profile}}"> {{cv.github_profile}}</a></div>
+                            <div id="email_address"><span class="far fa-envelope"></span> {{cv.email}}</div>
+                            <div id="linkedin_profile" class="LI-profile-badge"  data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="light" data-vanity="james-bray-9548a7172"><a class="LI-simple-link" href='{{cv.linkedin_profile}}'><i class="fab fa-linkedin"></i> James Bray</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <h2 id="heading_personal">Personal Profile</h2>
+                    <p id="personal_profile">
+                        {{cv.personal_statement}}
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="heading_personal">Personal Profile</h2>
-        <p id="personal_profile">
-            {{cv.personal_statement}}
-        </p>
+
+
         <h2 id="heading_education">Education</h2>
 
         <div id="qualifications">

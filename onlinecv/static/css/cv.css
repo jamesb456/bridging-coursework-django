@@ -2,15 +2,39 @@
     margin-top: 10px;
 }
 
+#btn-edit-cv{
+    float: right;
+}
 #form_edit_cv > h1{
     text-align: center;
     font-size: 4em;
 }
-
+#heading_personal{
+    text-align: center;
+}
 #contact_information{
     font-size: 1.5em;
 }
 .card{
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.page-header a{
+    color: lightgray;
+}
+
+.page-header a:hover{
+    color: white;
+}
+
+.page-header{
+    margin-top: 0;
+    margin-bottom: 20;
+    font-size: 20px;
+}
+
+.navbar-brand{
+    margin-right: 30px;
+   
 }

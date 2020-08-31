@@ -1,15 +1,23 @@
-h1 a{
-    color: #f1f1f1;
+.page-header a{
+    color: lightgray;
+}
+
+.page-header a:hover{
+    color: white;
+}
+
+.navbar-brand{
+    margin-right: 30px;
+   
 }
 
 h2 a{
     color: #0038A8;
 }
 .page-header{
-    background-color: #0038A8;
     margin-top: 0;
     margin-bottom: 20;
-    padding: 10px 10px 10px 10px;
+    font-size: 20px;
 }
 #header-title{
     font-size: 2em;
@@ -46,11 +54,24 @@ h2 a{
 }
 
 .post {
+
     margin-bottom: 70px;
     margin-left: auto;
     margin-right: auto;
 }
 
+
+.post h2{
+    margin-bottom: 10px;
+}
+
+.post h3{
+    margin-bottom: 10px;
+}
+
+.post p{
+    margin-bottom: 30px;
+}
 .post h2 a{
     color: #0038A8;
 }
